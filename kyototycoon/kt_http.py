@@ -808,6 +808,26 @@ class ProtocolHandler:
         self.err.set_success()
         return _tsv_to_dict(body, res.getheader('Content-Type', ''))
 
+    def seize(self, key, db):
+        path = '/rpc/seize'
+        path = urllib.quote(path.encode('UTF-8'), safe='')
+
+        if db:
+            path += '?DB=%s' % db
+        request_body = _dict_to_tsv({
+            'key': key
+        })
+        self.conn.request('POST', '/rpc/seize', body=request_body, headers=KT_HTTP_HEADER)
+        res = self.conn.getresponse()
+        body = res.read()
+        if res.status == 404:
+            self.err.set_error(self.err.NOTFOUND)
+            return None
+
+        self.err.set_success()
+        data = _tsv_to_dict(body, res.getheader('Content-Type',''))
+        return self.unpack(data['value'])
+
     def clear(self, db=None):
         url = '/rpc/clear'
 
