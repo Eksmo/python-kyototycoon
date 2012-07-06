@@ -717,13 +717,13 @@ class ProtocolHandler:
 
         # Only handle Pickle for now.
         if self.pack_type == KT_PACKER_PICKLE:
-            old_data = self.get(key)
-            if old_data is None:
+            data = self.get(key)
+            if data is None:
                 data = value
             else:
-                data = old_data + value
+                data = data + value
 
-            if self.cas(key, old_data, data, expire, db) is True:
+            if self.set(key, data, expire, db) is True:
                 self.err.set_success()
                 return True
         elif self.pack_type == KT_PACKER_STRING:
