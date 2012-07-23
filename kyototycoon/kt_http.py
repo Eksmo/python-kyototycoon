@@ -885,7 +885,17 @@ class ProtocolHandler:
         return rv.status
 
     def _pickle_packer(self, data):
-        return pickle.dumps(data, self.pickle_protocol)
+        if self.pack_type == KT_PACKER_PICKLE:
+            return pickle.dumps(data, self.pickle_protocol)
+        elif self.pack_type == KT_PACKER_STRING:
+            return data
+        else:
+            raise NotImplemented('Sorry')
 
     def _pickle_unpacker(self, data):
-        return pickle.loads(data)
+        if self.pack_type == KT_PACKER_PICKLE:
+            return pickle.loads(data)
+        elif self.pack_type == KT_PACKER_STRING:
+            return data
+        else:
+            raise NotImplemented('Sorry')
